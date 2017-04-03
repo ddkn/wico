@@ -1,0 +1,74 @@
+#!/bin/sh
+#-
+# Copyright 2017 David Kalliecharan
+# 
+# Permission to use, copy, modify, and/or distribute this software for any 
+# purpose with or without fee is hereby granted, provided that the above 
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES 
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF 
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY 
+# SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+# OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+# Configuration
+CONF=/etc/wiconn.conf
+WPA_SUPPLICANT_CONF=/etc/wpa_supplicant.conf
+
+if [ -n $1 ]
+then
+    INTF=$1
+else
+    echo -n "Choose an wireless interface to associate to a network [eg. lo0]: "
+    INTF_LST=`ifconfig | grep "^[a-zA-Z0-9]*:" | sed -e "s/:.*$//"`
+    INTF=`read`
+    INTF="`echo ${INTF_LST} | awk -v intf=${INTF} '{if($1 == intf) print $1}'`" 
+    if [ -z ${INTF} ]
+    then
+        echo "No applicable devices selected!"
+        exit
+    fi
+fi
+
+NWID_LST=`ifconfig ${INTF} scan | awk '{if ($1 == "nwid") print $2}'`
+
+# Acquires the parameter in the configuration file specificed in CONF
+# The configuration file expects the following format:
+#
+# network {
+#   nwid=myssid
+#   wpakey=myhashedkey
+#   options=extra options to pass to ifconfig
+#   # enterprise activates wpa_supplicant using the provided interface, and
+#   # configuration file specificed in INTF, and WPA_SUPPLICANT respectively.
+#   enterprise=false
+# }
+get_param()
+{
+    NWID=$1
+    PARAM=$2
+    echo "`cat ${CONF} | sed -e "/${NWID}/,/}/!d" | sed -e "s/^[ \t]*//" | grep [^}] | awk -F"=" -v param="${PARAM}" '{if ($1 == param) print $2}'`"
+}
+
+# NWID parameters from configuration file
+NWID="`get_param ${NWID} nwid`"
+WPAKEY="`get_param ${NWID} wpakey`"
+OPTIONS="`get_param ${NWID} options`"
+ENTERPRISE="`get_param ${NWID} enterprise`"
+
+if [ -n ${NWID} ]
+then
+    ifconfig ${INTF} nwid ${NWID} wpa ${OPTIONS} up
+fi
+
+if [ ${ENTERPRISE} == True ]
+then 
+    # Allow a few seconds for ifconfig to connect to AP
+    sleep 3
+    wpa_supplicant -i ${INTF} -c ${WPA_CONF} &
+fi
+
