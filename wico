@@ -16,7 +16,7 @@
 #
 
 # Configuration
-CONF=/etc/wiconn.conf
+CONF=~/etc/wico.conf
 WPA_SUPPLICANT_CONF=/etc/wpa_supplicant.conf
 INTF=
 
@@ -42,7 +42,7 @@ NWID_FOUND=`ifconfig ${INTF} scan | awk '{if ($1 == "nwid") print $2}'`
 NWID_APPROVED=`cat ${CONF} | grep nwid | sed -e "s/^[ \t]*nwid=//"`
 NWID_APPROVED=`echo ${NWID_APPROVED} | xargs | sed -e 's/\(.*\)/(\1)/' -e 's/ /|/'`
 NWID_AVAIL=`echo "${NWID_FOUND}" | egrep "${NWID_APPROVED}\$" | uniq`
-NWID_AVAIL=`echo "${NWID_AVAIL}" | awk '{i=0; print i+1":", $1}'`
+NWID_AVAIL=`echo "${NWID_AVAIL}" | awk '{print NR":", $1}'`
 
 if [ -z "${NWID_AVAIL}" ]
 then
@@ -94,6 +94,6 @@ if [ "${ENTERPRISE}" == "true" ]
 then 
     # Allow a few seconds for ifconfig to connect to AP
     sleep 3
-    wpa_supplicant -i ${INTF} -c ${WPA_CONF} &
+    wpa_supplicant -i ${INTF} -c ${WPA_SUPPLICANT_CONF} &
 fi
 
