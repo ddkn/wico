@@ -16,25 +16,46 @@
 #
 
 # Configuration
-CONF=/etc/wiconn.conf
+CONF=~/etc/wiconn.conf
 WPA_SUPPLICANT_CONF=/etc/wpa_supplicant.conf
+INTF=
 
-if [ -n $1 ]
+if [ ${INTF} == "" && -n $1 ]
 then
+    echo "${INTF} $1"
     INTF=$1
 else
-    echo -n "Choose an wireless interface to associate to a network [eg. lo0]: "
-    INTF_LST=`ifconfig | grep "^[a-zA-Z0-9]*:" | sed -e "s/:.*$//"`
-    INTF=`read`
-    INTF="`echo ${INTF_LST} | awk -v intf=${INTF} '{if($1 == intf) print $1}'`" 
+    echo -n "Choose an wireless interface to associate to a network: "
+    INTF_LST=`ifconfig | egrep "^[a-zA-Z0-9]*:" | sed -e "s/:.*$//"`
+    echo "${INTF_LST}"
+    echo -n "[eg. lo0]: "
+    read INTF
+    INTF=`echo "${INTF_LST}" | awk -v intf="${INTF}" '{if($1 == intf) print $1}'` 
     if [ -z ${INTF} ]
     then
-        echo "No applicable devices selected!"
+        echo "No applicable interface selected!"
         exit
     fi
 fi
 
-NWID_LST=`ifconfig ${INTF} scan | awk '{if ($1 == "nwid") print $2}'`
+NWID_FOUND=`ifconfig ${INTF} scan | awk '{if ($1 == "nwid") print $2}'`
+NWID_APPROVED=`cat ${CONF} | grep nwid | sed -e "s/^[ \t]*nwid=//"`
+NWID_APPROVED=`echo ${NWID_APPROVED} | xargs | sed -e 's/\(.*\)/(\1)/' -e 's/ /|/'`
+NWID_AVAIL=`echo "${NWID_FOUND}" | egrep "${NWID_APPROVED}\$" | uniq`
+NWID_AVAIL=`echo "${NWID_AVAIL}" | awk '{i=0; print i+1":", $1}'`
+
+if [ -z ${NWID_AVAIL} ]
+then
+    echo "No approved availble nwid(s) found"
+    exit
+fi
+
+echo "nwid(s) listed in your conf file are within range:"
+echo "${NWID_AVAIL}"
+echo -n "Please make numerical selection [eg. 1]: "
+read CHOICE
+
+NWID=`echo "${NWID_AVAIL}" | egrep "^${CHOICE}:" | sed -e 's/^[0-9]*: //'`
 
 # Acquires the parameter in the configuration file specificed in CONF
 # The configuration file expects the following format:
@@ -62,7 +83,11 @@ ENTERPRISE="`get_param ${NWID} enterprise`"
 
 if [ -n ${NWID} ]
 then
-    ifconfig ${INTF} nwid ${NWID} wpa ${OPTIONS} up
+    if [ -n ${WPAKEY} ]
+    then
+        WPAKEY="wpakey ${WPAKEY}"
+    fi
+    ifconfig ${INTF} nwid ${NWID} wpa ${WPAKEY} ${OPTIONS} up
 fi
 
 if [ ${ENTERPRISE} == True ]
