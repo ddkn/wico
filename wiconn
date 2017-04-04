@@ -16,15 +16,15 @@
 #
 
 # Configuration
-CONF=~/etc/wiconn.conf
+CONF=/etc/wiconn.conf
 WPA_SUPPLICANT_CONF=/etc/wpa_supplicant.conf
 INTF=
 
-if [ ${INTF} == "" && -n $1 ]
+if [ -n "$1" ]
 then
-    echo "${INTF} $1"
     INTF=$1
-else
+elif [ -z "${INTF}" ]
+then
     echo -n "Choose an wireless interface to associate to a network: "
     INTF_LST=`ifconfig | egrep "^[a-zA-Z0-9]*:" | sed -e "s/:.*$//"`
     echo "${INTF_LST}"
@@ -44,7 +44,7 @@ NWID_APPROVED=`echo ${NWID_APPROVED} | xargs | sed -e 's/\(.*\)/(\1)/' -e 's/ /|
 NWID_AVAIL=`echo "${NWID_FOUND}" | egrep "${NWID_APPROVED}\$" | uniq`
 NWID_AVAIL=`echo "${NWID_AVAIL}" | awk '{i=0; print i+1":", $1}'`
 
-if [ -z ${NWID_AVAIL} ]
+if [ -z "${NWID_AVAIL}" ]
 then
     echo "No approved availble nwid(s) found"
     exit
@@ -81,16 +81,16 @@ WPAKEY="`get_param ${NWID} wpakey`"
 OPTIONS="`get_param ${NWID} options`"
 ENTERPRISE="`get_param ${NWID} enterprise`"
 
-if [ -n ${NWID} ]
+if [ -n "${NWID}" ]
 then
-    if [ -n ${WPAKEY} ]
+    if [ -n "${WPAKEY}" ]
     then
         WPAKEY="wpakey ${WPAKEY}"
     fi
     ifconfig ${INTF} nwid ${NWID} wpa ${WPAKEY} ${OPTIONS} up
 fi
 
-if [ ${ENTERPRISE} == True ]
+if [ "${ENTERPRISE}" == "true" ]
 then 
     # Allow a few seconds for ifconfig to connect to AP
     sleep 3

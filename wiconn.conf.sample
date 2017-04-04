@@ -1,0 +1,23 @@
+# /etc/wiconn.conf.sample
+#
+# The configuration file expects the following format:
+#
+# network {
+#   nwid=myssid
+#   wpakey=myhashedkey
+#   options=extra options to pass to ifconfig
+#   # enterprise activates wpa_supplicant using the provided interface, and
+#   # configuration file specificed in INTF, and WPA_SUPPLICANT respectively.
+#   enterprise=false
+# }
+#
+# network {
+#     nwid=myssid
+#     wpakey=myhashedkeyORnot
+# }
+# 
+# network {
+#     nwid=myuniversity
+#     options=wpaakms 802.1x
+#     enterprise=true
+# }
