@@ -50,7 +50,7 @@ then
     exit
 fi
 
-echo "nwid(s) listed in your conf file are within range:"
+echo "Networks listed in your conf file that are within range:"
 echo "${NWID_AVAIL}"
 echo -n "Please make numerical selection [eg. 1]: "
 read CHOICE
