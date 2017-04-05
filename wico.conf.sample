@@ -1,7 +1,11 @@
 # /etc/wiconn.conf.sample
 #
-# The configuration file expects the following format:
+## Interface configuration
+# intf=iwn0
+## wpa_supplicant configuration
+# wpa_supplicant_conf=/etc/wpa_supplicant.conf
 #
+## The config file expects network configuration in the following format:
 # network {
 #   nwid=myssid
 #   wpakey=myhashedkey
@@ -10,6 +14,8 @@
 #   # configuration file specificed in INTF, and WPA_SUPPLICANT respectively.
 #   enterprise=false
 # }
+#
+## Network examples
 #
 # network {
 #     nwid=myssid

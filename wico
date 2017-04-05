@@ -18,18 +18,20 @@
 # Configuration
 CONF_USER=~/.wico.conf
 CONF_SYSTEM=/etc/wico.conf
-INTF=
 
-if [ -r "${CONF_USER}"]
+if [ -r ${CONF_USER} ]
 then
     CONF=${CONF_USER}
-elif [ -r "${CONF_SYSTEM}" ]
+elif [ -r ${CONF_SYSTEM} ]
 then
     CONF=${CONF_SYSTEM}
-else
+else 
     echo "Configuration file(s) not readable!"
     exit
 fi
+
+INTF=`cat "${CONF}" | grep intf | cut -d"=" -f2`
+WPA_SUPPLICANT_CONF=`cat "${CONF}" | grep wpa_supplicant_conf | cut -d"=" -f2`
 
 if [ -n "$1" ]
 then
@@ -103,7 +105,6 @@ fi
 
 if [ "${ENTERPRISE}" == "true" ]
 then
-    WPA_SUPPLICANT_CONF=/etc/wpa_supplicant.conf
     # Allow a few seconds for ifconfig to connect to AP
     sleep 3
     wpa_supplicant -i ${INTF} -c ${WPA_SUPPLICANT_CONF} &
