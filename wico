@@ -26,7 +26,7 @@ elif [ -r ${CONF_SYSTEM} ]
 then
     CONF=${CONF_SYSTEM}
 else 
-    echo "Configuration file(s) not readable!"
+    echo "Configuration file(s) not present, or readable!"
     exit
 fi
 
@@ -53,7 +53,7 @@ fi
 
 NWID_FOUND=`ifconfig ${INTF} scan | awk '{if ($1 == "nwid") print $2}'`
 NWID_APPROVED=`cat ${CONF} | grep nwid | sed -e "s/^[ \t]*nwid=//"`
-NWID_APPROVED=`echo ${NWID_APPROVED} | xargs | sed -e 's/\(.*\)/(\1)/' -e 's/ /|/'`
+NWID_APPROVED=`echo ${NWID_APPROVED} | xargs | sed -e 's/\(.*\)/(\1)/' -e 's/ /|/g'`
 NWID_AVAIL=`echo "${NWID_FOUND}" | egrep "${NWID_APPROVED}\$" | uniq`
 NWID_AVAIL=`echo "${NWID_AVAIL}" | awk '{print NR":", $1}'`
 
@@ -63,7 +63,7 @@ then
     exit
 fi
 
-echo "Networks listed in your conf file that are within range:"
+echo "Networks approved that are within range:"
 echo "${NWID_AVAIL}"
 echo -n "Please make numerical selection [eg. 1]: "
 read CHOICE
@@ -106,6 +106,11 @@ fi
 if [ "${ENTERPRISE}" == "true" ]
 then
     # Allow a few seconds for ifconfig to connect to AP
+    WPA_SUPPLICANT_CTRL_IFACE="/var/run/wpa_supplicant/${INTF}"
+    if [ -e "${WPA_SUPPLICANT_CTRL_IFACE}" ]
+    then
+        rm "${WPA_SUPPLICANT_CTRL_IFACE}"
+    fi
     sleep 3
     wpa_supplicant -i ${INTF} -c ${WPA_SUPPLICANT_CONF} &
 fi
