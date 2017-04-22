@@ -1,6 +1,6 @@
 wico
 ====
-A **wi**reless **co**nnection manager.
+A wireless connection manager.
 
 Wico is an exercise in creating wifi manager for OpenBSD using the standard unix-like tools provided in the base system, such gems as awk, cat, grep, sed, uniq etc...
 
