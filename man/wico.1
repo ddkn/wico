@@ -1,0 +1,48 @@
+.\"Copyright (c) 2017 David Kalliecharan <dave@phaseshift.tech>
+.\"                                                                            
+.\"Permission to use, copy, modify, and distribute this software for any       
+.\"purpose with or without fee is hereby granted, provided that the above      
+.\"copyright notice and this permission notice appear in all copies.           
+.\"                                                                            
+.\"THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES    
+.\"WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF            
+.\"MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR     
+.\"ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES      
+.\"WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN       
+.\"ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF     
+.\"OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.  
+.Dd $Mdocdate$ 
+.Dt WICO 1
+.Os 
+.Sh NAME 
+.Nm wico
+.Nd connects to wireless networks in 
+.Xr wico.conf 5
+.Sh SYNOPSIS 
+.Nm wico
+.Sh DESCRIPTION 
+The 
+.Nm 
+utility is a wireless connection manager.
+.Nm 
+connects to a wireless network. It utilizes the 
+.Xr ifconfig 8
+for handling the majority of WPA wireless connections, but also utilizes 
+.Xr wpa_supplicant 1
+and
+.Xr wpa_supplicant.conf 5
+for handling WPA enterprise connections.
+.Sh SEE ALSO 
+.Xr ifconfig 8
+.Xr dhclient 8
+.Xr wico.conf 5
+.Xr wpa_supplicant 1
+.Xr wpa_supplicant.conf 5
+.Sh HISTORY 
+The
+.Nm
+command was desgined to encompass wireless enterprise connectivity
+in 
+.Ox 6.0+.
+.Sh AUTHORS 
+.An David Kalliecharan Aq Mt dave@phaseshift.tech

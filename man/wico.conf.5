@@ -1,0 +1,86 @@
+.\"Copyright (c) 2017 David Kalliecharan <dave@phaseshift.tech>
+.\"                                                                            
+.\"Permission to use, copy, modify, and distribute this software for any       
+.\"purpose with or without fee is hereby granted, provided that the above      
+.\"copyright notice and this permission notice appear in all copies.           
+.\"                                                                            
+.\"THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES    
+.\"WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF            
+.\"MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR     
+.\"ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES      
+.\"WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN       
+.\"ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF     
+.\"OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.  
+.Dd $Mdocdate$ 
+.Dt WICO.CONF 5
+.Os 
+.Sh NAME 
+.Nm wico.conf
+.Nd wico configuration file
+.Xr wico 1
+.Sh SYNOPSIS 
+.Nm /etc/wico.conf
+.Nm ~/.wico.conf
+.Sh DESCRIPTION
+The 
+.Xr wico 1 
+utility is a wireless connection manager for networks according to the
+.Nm 
+configuration file. The file is very basic, and only requires a few items 
+for wirelss network management.
+.Bl -tag -width wpa_supplicant_conf
+.It Ic intf
+The interface that wireless connections should connect over.
+.It Ic wpa_supplicant_conf
+The location where wpa_supplicant.conf is located.
+.It Ic network
+Network settings are encapsulated by {}, and are listed below:
+.Bl -tag -width enterprise
+.It Ic nwid
+The ssid that you wish to connect too.
+.It Ic wpakey
+The WPA key used to connect to the ssid. For added security use a hashed key.
+.It Ic options
+Additional options that can be passed to
+.Xr ifconfig 8 .
+.It Ic enterprise 
+If set to "true", 
+.Xr wico 1
+tries to use
+.Xr wpa_supplicant 1
+to perform the desired handshaking to connect to the network.
+.Sh EXAMPLE
+intf=iwn0
+.br
+wpa_supplicant_conf=/etc/wpa_supplicant.conf
+
+network
+.Bro 
+.br
+.D1 nwid=myssid
+.br
+.D1 wpakey=myhashedkeyORnot
+.Brc
+
+network
+.Bro
+.D1 nwid=myuniversity
+.br
+.D1 options=wpaakms 802.1x
+.br
+.D1 enterprise=true
+.br
+.Brc
+.Sh SEE ALSO 
+.Xr ifconfig 8
+.Xr dhclient 8
+.Xr wico.conf 5
+.Xr wpa_supplicant 1
+.Xr wpa_supplicant.conf 5
+.Sh HISTORY 
+The
+.Nm
+configuration file was initially designed on 
+.Ox 6.0+.
+.Sh AUTHORS 
+.An David Kalliecharan Aq Mt dave@phaseshift.tech
