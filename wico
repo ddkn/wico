@@ -25,7 +25,7 @@ then
 elif [ -r ${CONF_SYSTEM} ]
 then
     CONF=${CONF_SYSTEM}
-else 
+else
     echo "Configuration file(s) not present, or readable!"
     exit
 fi
@@ -51,11 +51,13 @@ then
     fi
 fi
 
-NWID_FOUND=`ifconfig ${INTF} scan | awk '{if ($1 == "nwid") print $2}'`
-NWID_APPROVED=`cat ${CONF} | grep nwid | sed -e "s/^[ \t]*nwid=//"`
-NWID_APPROVED=`echo ${NWID_APPROVED} | xargs | sed -e 's/\(.*\)/(\1)/' -e 's/ /|/g'`
-NWID_AVAIL=`echo "${NWID_FOUND}" | egrep "${NWID_APPROVED}\$" | uniq`
-NWID_AVAIL=`echo "${NWID_AVAIL}" | awk '{print NR":", $1}'`
+NWID_FOUND=`ifconfig ${INTF} scan | grep nwid | sed -e 's/.*nwid \([-A-Za-z0-9 "]*\) chan.*/\1/g' | sort`
+NWID_APPROVED=`cat ${CONF} | grep nwid | sed -e "s/^[ \t]*nwid=//" | sort`
+NWID_TMP=~/.wico.tmp
+`echo "${NWID_APPROVED}" > "${NWID_TMP}"`
+NWID_AVAIL=`echo "${NWID_FOUND}" | comm -1 -2 - "${NWID_TMP}"`
+NWID_AVAIL=`echo "${NWID_AVAIL}" | awk '{print NR":", $0}'`
+`rm "${NWID_TMP}"`
 
 if [ -z "${NWID_AVAIL}" ]
 then
