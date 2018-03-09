@@ -51,12 +51,23 @@ then
     fi
 fi
 
-NWID_FOUND=`ifconfig ${INTF} scan | grep nwid | sed -e 's/.*nwid \([-A-Za-z0-9 "]*\) chan.*/\1/g' | sort`
-NWID_APPROVED=`cat ${CONF} | grep nwid | sed -e "s/^[ \t]*nwid=//" | sort`
-NWID_TMP=~/.wico.tmp
-`echo "${NWID_APPROVED}" > "${NWID_TMP}"`
-NWID_AVAIL=`echo "${NWID_FOUND}" | comm -1 -2 - "${NWID_TMP}"`
-NWID_AVAIL=`echo "${NWID_AVAIL}" | awk '{print NR":", $0}'`
+NWID_FOUND=`ifconfig ${INTF} scan | egrep -o "nwid .*" | awk '{ gsub(" chan.*", ""); gsub("nwid ", ""); print $0}' | sort | uniq`
+NWID_APPROVED=`cat ${CONF} | grep nwid | sed -e "s/^[ $(printf '\t')]*nwid=//" | sort`
+NWID_AVAIL=""
+for nwa in $NWID_APPROVED
+do
+    for nwf in $NWID_FOUND
+    do
+        if [ $nwa = $nwf ]
+        then
+            echo "match"
+            NWID_AVAIL="$NWID_AVAIL$nwf\n"
+        fi
+    done
+done
+NWID_AVAIL=`echo $NWID_AVAIL | sed "s/\n$//g"`
+
+NWID_AVAIL=`echo "$NWID_AVAIL" | awk '{print NR":", $0}'`
 `rm "${NWID_TMP}"`
 
 if [ -z "${NWID_AVAIL}" ]
