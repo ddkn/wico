@@ -60,7 +60,6 @@ do
     do
         if [ $nwa = $nwf ]
         then
-            echo "match"
             NWID_AVAIL="$NWID_AVAIL$nwf\n"
         fi
     done
@@ -68,7 +67,6 @@ done
 NWID_AVAIL=`echo $NWID_AVAIL | sed "s/\n$//g"`
 
 NWID_AVAIL=`echo "$NWID_AVAIL" | awk '{print NR":", $0}'`
-`rm "${NWID_TMP}"`
 
 if [ -z "${NWID_AVAIL}" ]
 then
