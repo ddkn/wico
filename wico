@@ -36,7 +36,7 @@ WPA_SUPPLICANT_CONF=`cat "${CONF}" | grep wpa_supplicant_conf | cut -d"=" -f2`
 if [ -n "$1" ]
 then
     INTF=$1
-elif [ -z "${INTF}" ]
+elif [ -z "$INTF" ]
 then
     echo -n "Choose an wireless interface to associate to a network: "
     INTF_LST=`ifconfig | egrep "^[a-zA-Z0-9]*:" | sed -e "s/:.*$//"`
@@ -44,14 +44,14 @@ then
     echo -n "[eg. lo0]: "
     read INTF
     INTF=`echo "${INTF_LST}" | awk -v intf="${INTF}" '{if($1 == intf) print $1}'`
-    if [ -z ${INTF} ]
+    if [ -z $INTF ]
     then
         echo "No applicable interface selected!"
         exit
     fi
 fi
 
-NWID_FOUND=`ifconfig ${INTF} scan | egrep -o "nwid .*" | awk '{ gsub(" chan.*", ""); gsub("nwid ", ""); print $0}' | sort | uniq`
+NWID_FOUND=`ifconfig $INTF scan | egrep -o "nwid .*" | awk '{ gsub(" chan.*", ""); gsub("nwid ", ""); print $0}' | sort | uniq`
 NWID_APPROVED=`cat ${CONF} | grep nwid | sed -e "s/^[ $(printf '\t')]*nwid=//" | sort`
 NWID_AVAIL=""
 for nwa in $NWID_APPROVED
@@ -68,7 +68,7 @@ NWID_AVAIL=`echo $NWID_AVAIL | sed "s/\n$//g"`
 
 NWID_AVAIL=`echo "$NWID_AVAIL" | awk '{print NR":", $0}'`
 
-if [ -z "${NWID_AVAIL}" ]
+if [ -z $NWID_AVAIL ]
 then
     echo "No approved availble nwid(s) found"
     exit
@@ -114,15 +114,15 @@ then
     ifconfig ${INTF} nwid ${NWID} wpa ${WPAKEY} ${OPTIONS} up
 fi
 
-if [ "${ENTERPRISE}" == "true" ]
+if [ $ENTERPRISE == "true" ]
 then
     # Allow a few seconds for ifconfig to connect to AP
     WPA_SUPPLICANT_CTRL_IFACE="/var/run/wpa_supplicant/${INTF}"
-    if [ -e "${WPA_SUPPLICANT_CTRL_IFACE}" ]
+    if [ -e $WPA_SUPPLICANT_CTRL_IFACE ]
     then
-        rm "${WPA_SUPPLICANT_CTRL_IFACE}"
+        rm $WPA_SUPPLICANT_CTRL_IFACE
     fi
     sleep 3
-    wpa_supplicant -i ${INTF} -c ${WPA_SUPPLICANT_CONF} &
+    wpa_supplicant -i $INTF -c $WPA_SUPPLICANT_CONF &
 fi
 
