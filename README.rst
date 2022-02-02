@@ -1,7 +1,7 @@
 DEPRECATED
 ==========
 
-Mentioned at [Undeadly](https://undeadly.org/cgi?action=article;sid=20180712084645) auto-join feature was added as feature of hostname.if, which works quite well with **wpa_supplicant**--rendering this script useless for modern OpenBSD-CURRENT post 2018/Jul/12. This repo is available if one requires the scripts for an older OpenBSD--meaning this repo is no longer maintained.
+Mentioned at `Undeadly`_ auto-join feature was added as feature of hostname.if, which works quite well with **wpa_supplicant**--rendering this script useless for modern OpenBSD-CURRENT post 2018/Jul/12. This repo is available if one requires the scripts for an older OpenBSD--meaning this repo is no longer maintained.
 
 wico
 ====
@@ -55,3 +55,5 @@ Example
         options=wpaakms 802.1x
         enterprise=true
     }
+
+.. _Undeadly: https://undeadly.org/cgi?action=article;sid=20180712084645
